@@ -7,7 +7,7 @@ import datetime
 #cap = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_PLAIN
  
-url='http://192.168.124.1/'
+url='http://192.168.40.1/'
 cv2.namedWindow("live transmission", cv2.WINDOW_AUTOSIZE)
 URLx = 'http://127.0.0.1:2000/'
 prev=""

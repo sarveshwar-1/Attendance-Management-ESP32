@@ -1,0 +1,72 @@
+{%extends 'base.html'%}
+{%block content%}
+<form action="/register" method="post">
+    <div class="mb-3">
+        <label for="name" class="form-label">Full Name</label>
+        <input type="text" class="form-control" id="name" name="name">
+    </div>
+    <div class="mb-3">
+        <label for="employeeId" class="form-label">Employee ID</label>
+        <input type="text" class="form-control" id="employeeId" name="employeeId">
+    </div>
+    <div class="mb-3">
+        <h5>Authentication Details</h5>
+        <label for="username" class="form-label">Username</label>
+        <input type="text" class="form-control" id="username" name="username">
+        <label for="password" class="form-label">Password</label>
+        <input type="password" class="form-control" id="password" name="password">
+        <label for="repeatPassword" class="form-label">Repeat Password</label>
+        <input type="password" class="form-control" id="repeatPassword" name="repeatPassword">
+    </div>
+<!-- ... -->
+<div class="mb-3">
+    <label class="form-label">Classes</label>
+    <div id="classes">
+        <!-- Replace with your actual classes -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="class1" id="class1" name="classes[]">
+            <label class="form-check-label" for="class1">Class 1</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="class2" id="class2" name="classes[]">
+            <label class="form-check-label" for="class2">Class 2</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="class3" id="class3" name="classes[]">
+            <label class="form-check-label" for="class3">Class 3</label>
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary mt-2" onclick="clearSelection('classes')">Clear</button>
+</div>
+<div class="mb-3">
+    <label class="form-label">Subject of Expertise</label>
+    <div id="subjects">
+        <!-- Replace with your actual subjects -->
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="subject1" id="subject1" name="subjects[]">
+            <label class="form-check-label" for="subject1">Subject 1</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="subject2" id="subject2" name="subjects[]">
+            <label class="form-check-label" for="subject2">Subject 2</label>
+        </div>
+        <div class="form-check">
+            <input class="form-check-input" type="checkbox" value="subject3" id="subject3" name="subjects[]">
+            <label class="form-check-label" for="subject3">Subject 3</label>
+        </div>
+    </div>
+    <button type="button" class="btn btn-secondary mt-2" onclick="clearSelection('subjects')">Clear</button>
+</div>
+    <button type="submit" class="btn btn-primary">Register</button>
+</form>
+<script>
+    function clearSelection(id) {
+        var inputs = document.getElementById(id).getElementsByTagName('input');
+        for (var i = 0; i < inputs.length; i++) {
+            if (inputs[i].type === 'checkbox') {
+                inputs[i].checked = false;
+            }
+        }
+    }
+</script>
+{%endblock%}
