@@ -1,31 +1,7 @@
 
 {%extends 'base.html'%}
 {%block content%}
-    <br>
-    <div class = "a" style = "display:flex;justify-content: center;padding-top: 20px;">
-        <div class = "b" >
-        {%if messages!=[]%}
-        <table class="table" style="border: solid black 2px;">
-            <thead>
-                <tr>
-                <th scope="col">Roll Number</th>
-                <th scope="col">Time</th>
-                </tr>
-            </thead>
-            <tbody>
-                {%for i in messages%}
-                <tr>
-                    <td>{{i['data']}}</td>
-                    <td>{{i['time']}}</td>
-                </tr>
-                {%endfor%}
-            </tbody>
-        </table>
-        {% else %}
-        <div class="welcome">
-            <h1>Welcome</h1><h1>{{ session['username'] }}</h1>
+        <div class="welcome" style="display: flex;justify-content: center;flex-direction: row;">
+            <h1>Welcome {{ session['username'] }}</h1>
         </div>  
-        {%endif%}
-    </div>
-    </div> 
 {%endblock%}

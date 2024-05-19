@@ -6,12 +6,13 @@ app.config["MONGO_URI"] = "mongodb://localhost:27017/Attendance"
 mongo = PyMongo(app)
 students = mongo.db.students
 staff = mongo.db.staff
+classes = mongo.db.classea
 app.config['SECRET_KEY'] = 'secret'
-@app.before_request
-def require_login():
-    allowed_routes = ['login', 'register']  # routes that don't require login
-    if request.endpoint not in allowed_routes and 'username' not in session:
-        return redirect(url_for('login'))
+# @app.before_request
+# def require_login():
+#     allowed_routes = ['login', 'register']  # routes that don't require login
+#     if request.endpoint not in allowed_routes and 'username' not in session:
+#         return redirect(url_for('login'))
 @app.route('/post', methods=['POST','GET'])
 def index():
     if request.method == 'POST':
@@ -21,17 +22,13 @@ def index():
         return 'success'
 @app.route('/home', methods=['POST','GET'])
 def home():
-    y = students.find()
-    y = list(y)
-    print(y)
-    return render_template('index.html', messages=y)
+    return render_template('index.html')
+
+
 @app.route('/deleteAll', methods=['POST','GET'])
 def delete():
     students.delete_many({})
     return redirect(url_for('home'))
-@app.route('/main', methods=['POST','GET'])
-def main():
-    return render_template('main.html')
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -71,7 +68,7 @@ def register():
             return redirect(url_for('home'))
     else:
         return render_template('register.html')
-@app.route('/add_class', methods=['POST'])
+@app.route('/add_class', methods=['POST','GET'])
 def add_class():
     if request.method == 'POST':
         class_name = request.form.get('class_name')
@@ -80,14 +77,46 @@ def add_class():
     else:
         return 'Invalid request'
 
-@app.route('/create_class', methods=['POST'])
+@app.route('/listen', methods=['POST','GET'])
+def listen():
+
+    # class_name = session.get('class_name')
+
+    print(f"{class_name = }")
+    
+    if class_name is None:
+        return redirect(url_for('create_class'))
+    
+    if request.method == 'POST':
+        roll_no = request.form.get('data')
+        print(roll_no)
+        if roll_no:
+            classes.update_one({"class_name": class_name}, {"$push": {"students": roll_no}})
+            return redirect(f"/listen/{class_name}")
+        return redirect(f"/listen/{class_name}")
+    return render_template('listen.html')
+
+@app.route("/listen/<class_name>", methods=['POST','GET'])
+def listen_class(class_name):
+    class_ = classes.find_one({"class_name": class_name})
+    return render_template('listen.html',messages=class_)
+
+@app.route('/listen/stop',methods=['POST','GET'])
+def stop_classes():
+    class_name = None
+    if session['class_name']: del session['class_name']
+    return redirect(url_for('home'))
+
+@app.route('/create_class', methods=['POST','GET'])
 def create_class():
     if request.method == 'POST':
+        global class_name
         class_name = request.form.get('class_name')
         classes.insert_one({"class_name": class_name, "students": []})
-        return 'Class created successfully'
+        session['class_name'] = class_name
+        return redirect(f'listen/{class_name}')
     else:
-        return 'Invalid request'
+        return render_template('create_class.html')
 
 @app.route('/view_profile', methods=['GET'])
 def view_profile():
