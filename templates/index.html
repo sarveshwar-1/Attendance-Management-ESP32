@@ -1,7 +1,6 @@
 
-    {%extends 'base.html'%}
-    {%block content%}
-    
+{%extends 'base.html'%}
+{%block content%}
     <br>
     <div class = "a" style = "display:flex;justify-content: center;padding-top: 20px;">
         <div class = "b" >
@@ -25,9 +24,8 @@
         {% else %}
         <div class="welcome">
             <h1>Welcome</h1><h1>{{ session['username'] }}</h1>
-        </div>
-            
+        </div>  
         {%endif%}
     </div>
     </div> 
-    {%endblock%}
+{%endblock%}
