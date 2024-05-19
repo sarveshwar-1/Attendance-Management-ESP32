@@ -1,38 +1,47 @@
 
-{%block content%}
 <nav class="navbar navbar-expand-lg bg-body-tertiary" data-bs-theme="dark">
     <div class="container-fluid">
-      <a class="navbar-brand" href="#">Attendance management System</a>
-      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <a class="navbar-brand" href="#">Attendance Management System</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
-      </button>
-      <div class="collapse navbar-collapse" id="navbarSupportedContent">
-        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-          <li class="nav-item">
-            <a class="nav-link active" aria-current="page" href="#"></a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">Add Class</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">create Class</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">View profile</a>
-          </li>
-          <li class="nav-item">
-            <a class="nav-link" href="#">view Students</a>
-          </li>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{url_for('home')}}">Home</a>
+                </li>
+                {% if session.logged_in %}
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{url_for('add_class')}}">Add Class</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{url_for('create_class')}}">Create class</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{url_for('view_profile')}}">view profile</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link active" aria-current="page" href="{{url_for('view_students')}}">view students</a>
+                    </li>
+
+                {% endif %}
+            </ul>
+
+        <ul class="navbar-nav ms-auto mb-2 mb-lg-0">
+            {% if not session.logged_in %}
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{url_for('login')}}">Login</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{url_for('register')}}">Register</a>
+                </li>
+            {% else %}
+                <li class="nav-item">
+                    <a class="nav-link active" aria-current="page" href="{{url_for('logout')}}">LogOut</a>
+                </li>
+            {% endif %}
 
         </ul>
-
-        <form class="d-flex"action="/login">
-          <button class="btn btn-primary" type="submit" >Login</button>
-        </form>
-        <form class="d-flex"action="/register">
-          <button class="btn btn-primary" type="submit">Register</button>
-        </form>
-      </div>
     </div>
-  </nav>
-{%endblock%}
+    </div>
+</nav>

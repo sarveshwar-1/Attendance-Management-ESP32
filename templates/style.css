@@ -1,3 +1,5 @@
-h1{
-    padding:20px;
+.welcome{
+    display: flex;
+    justify-content: center;
+    flex-direction: row;
 }

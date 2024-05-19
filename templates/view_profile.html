@@ -1,0 +1,15 @@
+{%extends 'base.html'%}
+{%block content%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Profile</title>
+</head>
+<body>
+    <h1>Profile</h1>
+    <p>Username: {{ user.username }}</p>
+    <p>Classes: {{ user.classes }}</p>
+    <p>Subjects: {{ user.subjects }}</p>
+</body>
+</html>
+{%endblock%}

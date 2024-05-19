@@ -5,6 +5,7 @@
     <br>
     <div class = "a" style = "display:flex;justify-content: center;padding-top: 20px;">
         <div class = "b" >
+        {%if messages!=[]%}
         <table class="table" style="border: solid black 2px;">
             <thead>
                 <tr>
@@ -21,9 +22,12 @@
                 {%endfor%}
             </tbody>
         </table>
-        <form action="/deleteAll" method="post">
-            <input type="submit" value="Delete All Records">
-        </form>
+        {% else %}
+        <div class="welcome">
+            <h1>Welcome</h1><h1>{{ session['username'] }}</h1>
+        </div>
+            
+        {%endif%}
     </div>
     </div> 
     {%endblock%}

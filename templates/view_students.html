@@ -1,0 +1,16 @@
+{%extends 'base.html'%}
+{%block content%}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>View Students</title>
+</head>
+<body>
+    <h1>Students</h1>
+    {% for student in students %}
+        <p>Name: {{ student.name }}</p>
+        <p>Class: {{ student.class }}</p>
+    {% endfor %}
+</body>
+</html>
+{%endblock%}
