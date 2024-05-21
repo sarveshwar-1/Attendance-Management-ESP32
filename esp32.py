@@ -4,7 +4,6 @@ import pyzbar.pyzbar as pyzbar
 import urllib.request
 import requests
 import datetime
-from flask import Flask, request,render_template,redirect,url_for,session
 #cap = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_PLAIN
 url='http://192.168.224.1/'

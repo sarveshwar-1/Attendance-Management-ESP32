@@ -23,18 +23,12 @@
     <label class="form-label">Classes</label>
     <div id="classes">
         <!-- Replace with your actual classes -->
+        {% for index, class in enumerate(classes) %}
         <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="class1" id="class1" name="classes[]">
-            <label class="form-check-label" for="class1">Class 1</label>
+            <input class="form-check-input" type="checkbox" value="{{class}}" id="class{{index}}" name="classes[]">
+            <label class="form-check-label" for="class{{index}}">{{class}}</label>
         </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="class2" id="class2" name="classes[]">
-            <label class="form-check-label" for="class2">Class 2</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="class3" id="class3" name="classes[]">
-            <label class="form-check-label" for="class3">Class 3</label>
-        </div>
+        {% endfor %}
     </div>
     <button type="button" class="btn btn-secondary mt-2" onclick="clearSelection('classes')">Clear</button>
 </div>

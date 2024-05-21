@@ -1,8 +1,8 @@
 {%extends 'base.html'%}
-{%block content%}
-    <form action="/create_class" method="post">
+{% block content %}
+    <form action="/create_class" method="post" class="form-group">
         <label for="class_name">Class Name:</label><br>
-        <input type="text" id="class_name" name="class_name"><br>
-        <input type="submit" value="Create Class">
+        <input type="text" id="class_name" name="class_name" class="form-control"><br>
+        <input type="submit" value="Create Class" class="btn btn-primary">
     </form>
 {%endblock%}

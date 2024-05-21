@@ -95,15 +95,21 @@ def create_session(staffid):
 
 # ---------------------------------------------------------
 
+class_started = {"status" : False, "endpoint": ""}
 
 # ----------------- ROOT –---------------------------------
 @app.route('/root', methods=['GET','POST'])
 def root():
     staffid = request.json['data']
     if request.method == 'POST':
+        if class_started['status']:
+            return jsonify({'mode': 'CREATE_CLASS','endpoint': class_started['endpoint'], "status": "success"})
+            
+            
         if staff.find_one({"employeeId": staffid}):
-            return jsonify({'mode': 'CREATE_SESSION','endpoint': f"/session/{create_session(staffid)}"}) 
-    return jsonify({"mes":"hello"})
+            return jsonify({'mode': 'CREATE_SESSION','endpoint': f"/session/{create_session(staffid)}", "status": "success"})
+        return jsonify({"status":"staff not found"}) 
+    return jsonify({"status":"failed"})
 
 @app.route('/session/<_id>', methods=['GET','POST'])
 def managesession(_id):
@@ -117,67 +123,13 @@ def managesession(_id):
         return {"status": "success"}
     return jsonify({"mes":"hello"})
 
-
 @app.route('/add_class', methods=['POST','GET'])
 def add_class():
     if request.method == 'POST':
         class_name = request.form.get('class_name')
         staff.update_one({"username": session['username']}, {"$push": {"classes": class_name}})
         return 'Class added successfully'
-    else:
-        return 'Invalid request'
-
-
-@app.route('/listen', methods=['POST','GET'])
-def listen():
-    if class_name is None:
-        return redirect(url_for('create_class'))
-
-    if request.method == 'POST':
-        roll_no = request.json.get('data')
-        if roll_no:
-            classes.update_one({"class_name": class_name}, {"$push": {"students": roll_no}})
-            students.insert_one({roll_no: class_name})
-            return redirect(f"/listen/{class_name}")
-        return redirect(f"/listen/{class_name}")
-
-    return render_template('listen.html')
-
-
-@app.route("/listen/<class_name>", methods=['POST','GET'])
-def listen_class(class_name):
-    class_ = classes.find_one({"class_name": class_name})
-    if request.method == 'POST':
-        print(request.json)
-        print(request)
-        roll_no = request.json.get('data')
-        print(roll_no)
-        if roll_no:
-            classes.update_one({"class_name": class_name}, {"$push": {"students": roll_no}})
-            students.insert_one({roll_no: class_name})
-            return redirect(f"/listen/{class_name}")
-        return redirect(f"/listen/{class_name}")
-    return render_template('listen.html',messages=class_)
-
-
-@app.route('/listen/stop',methods=['POST','GET'])
-def stop_classes():
-    class_name = None
-    if session['class_name']: del session['class_name']
-    return redirect(url_for('home'))
-
-
-@app.route('/create_class', methods=['POST','GET'])
-def create_class():
-    if request.method == 'POST':
-        global class_name
-        class_name = request.form.get('class_name')
-        classes.insert_one({"class_name": class_name, "students": []})
-
-        return redirect(f'listen/{class_name}')
-
-    return render_template('create_class.html')
-
+    return render_template('add_class.html')    
 
 @app.route('/view_profile', methods=['GET'])
 def view_profile():
@@ -188,6 +140,43 @@ def view_profile():
         
         return 'User not found'
     return 'Invalid request'
+
+# ---------------------Create Class------------------------------------
+
+
+@app.route('/view_class/<class_id>', methods=['GET'])
+def view_class(class_id):
+    _class = classes.find_one({"_id": class_id})
+    return render_template('view_class.html', classes= _class)
+
+
+
+
+@app.route('/create_class', methods=['POST','GET'])
+def create_class():
+    if request.method == 'POST':
+        class_name = request.form.get('class_name')
+        _class = {
+            "_id": uuid.uuid4().hex, 
+            "class_name": class_name,
+            "students": []
+        }
+        classes.insert_one(_class)
+        
+        global class_started
+        class_started = {"status":True, "endpoint": f"/add_students/{_class['_id']}", "class_id": f"{_class['_id']}"}
+        
+        return redirect(f"/view_class/{_class['_id']}")
+
+    return render_template('create_class.html')
+
+@app.route('/add_students/<class_id>', methods=['GET'])
+def add_students(class_id):
+    if request.method == 'POST':
+        student = request.form.get('student')
+        classes.update_one({"_id": class_id}, {"$push": {"students": student}})
+        return {"status": "success"}
+    return {'mes':'hello'}
 
 
 

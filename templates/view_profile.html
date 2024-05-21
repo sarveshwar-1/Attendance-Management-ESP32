@@ -7,9 +7,18 @@
 </head>
 <body>
     <h1>Profile</h1>
+    <p>Name: {{ user.name }}</p>
+    <p>Employee ID: {{ user.employeeId }}</p>
     <p>Username: {{ user.username }}</p>
-    <p>Classes: {{ user.classes }}</p>
-    <p>Subjects: {{ user.subjects }}</p>
+    <p>Classes:</p>
+    {% for class in user.classes %}
+        <p>{{ class }}</p>
+    {% endfor %}
+    <p>Subjects:</p>
+    {% for subject in user.subjects %}
+        <p>{{ subject }}</p>
+    {% endfor %}
+</body>
 </body>
 </html>
 {%endblock%}
