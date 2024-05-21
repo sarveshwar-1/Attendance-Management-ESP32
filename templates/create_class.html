@@ -1,8 +1,16 @@
-{%extends 'base.html'%}
+
+{% extends 'base.html' %}
+
 {% block content %}
-    <form action="/create_class" method="post" class="form-group">
-        <label for="class_name">Class Name:</label><br>
-        <input type="text" id="class_name" name="class_name" class="form-control"><br>
-        <input type="submit" value="Create Class" class="btn btn-primary">
-    </form>
-{%endblock%}
+<h1>Please select a session</h1>
+<form action="/create_class/session" method="post">
+    {% for session in sessions %}
+        <div class="form-check">
+            <input class="form-check-input" type="radio" id="session{{ loop.index0 }}" name="session_id" value="{{ session.get('session_id') }}">
+            <label class="form-check-label" for="session{{ loop.index0 }}">session_id:{{ session.get('session_id') }} date_time {{ session.get('timestamp') }} sample roll_no:{{ session.get('students')[0] }}</label>
+        </div>
+    {% endfor %}
+    <input type="text" name="class_name" id="class" placeholder="Enter Class Name">
+    <button type="submit" class="btn btn-primary">Create Class</button>
+</form>
+{% endblock %}
