@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+{% block content %}
+<h1 style="text-align: center;">Attendance Report</h1>
+<div class="container mt-5">
+    {% for record in attendance %}
+    <h1>Class: {{ record.class }}</h1>
+    <h2>Subject: {{ record.subject }}</h2>
+    <h3>Staff: {{ record.staff }}</h3>
+    <h4>Timestamp: {{ record.timestamp }}</h4>
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th scope="col">Student ID</th>
+                <th scope="col">Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for student in record.Attendance %}
+                <tr>
+                    <td>{{ student.student_id }}</td>
+                    <td>{{ student.status }}</td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endfor %}
+</div>
+{% endblock %}

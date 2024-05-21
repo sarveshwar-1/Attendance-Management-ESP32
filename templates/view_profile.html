@@ -1,24 +1,30 @@
-{%extends 'base.html'%}
-{%block content%}
-<!DOCTYPE html>
-<html>
-<head>
-    <title>View Profile</title>
-</head>
-<body>
-    <h1>Profile</h1>
-    <p>Name: {{ user.name }}</p>
-    <p>Employee ID: {{ user.employeeId }}</p>
-    <p>Username: {{ user.username }}</p>
-    <p>Classes:</p>
-    {% for class in user.classes %}
-        <p>{{ class }}</p>
-    {% endfor %}
-    <p>Subjects:</p>
-    {% for subject in user.subjects %}
-        <p>{{ subject }}</p>
-    {% endfor %}
-</body>
-</body>
-</html>
-{%endblock%}
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container mt-5">
+    <div class="card">
+        <div class="card-header">
+            <h1>Profile</h1>
+        </div>
+        <div class="card-body">
+            <h5 class="card-title">Name: {{ user.name }}</h5>
+            <p class="card-text"><strong>Employee ID:</strong> {{ user.employeeId }}</p>
+            <p class="card-text"><strong>Username:</strong> {{ user.username }}</p>
+            
+            <h5>Classes</h5>
+            <ul class="list-group mb-3">
+                {% for class in user.classes %}
+                    <li class="list-group-item">{{ class }}</li>
+                {% endfor %}
+            </ul>
+
+            <h5>Subjects</h5>
+            <ul class="list-group">
+                {% for subject in user.subjects %}
+                    <li class="list-group-item">{{ subject }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

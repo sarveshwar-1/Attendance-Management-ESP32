@@ -12,10 +12,12 @@ app.config['SECRET_KEY'] = 'secret'
 # --------- DATABASE CONNECTION ------------
 app.config["MONGO_URI"] = "mongodb://localhost:27017/Attendance"
 mongo = PyMongo(app)
-students = mongo.db.students
+students_collection = mongo.db.students
 staff = mongo.db.staff
 session_collection = mongo.db.sessions
 classes = mongo.db.classes
+subjects = mongo.db.subjects
+attendance = mongo.db.attendance
 # ------------------------------------------
 
 # @app.before_request
@@ -25,6 +27,9 @@ classes = mongo.db.classes
 #         return redirect(url_for('login'))
 
 # ------------ AUTHENTICATION ----------------
+
+
+
 
 @app.route('/login', methods=['POST','GET'])
 def login():
@@ -44,23 +49,25 @@ def register():
     if request.method == 'POST':
         username = request.form.get('username')
         password = request.form.get('password')
-        if students.find_one({"username": username}):
+        if staff.find_one({"username": username}):
             return 'Username already exists'
         if password != request.form.get('repeatPassword'):
             return 'Passwords do not match'
-        
+        class_subjects = []
+        for i in range(int(request.form.get('count'))):
+            class_subjects.append({f"class{i}":request.form.get(f'class{i}'),f"subject{i}":request.form.get(f'subject{i}')})
+
+        print(class_subjects)
         staff.insert_one({
             "name": request.form.get('name'),
             "employeeId": request.form.get('employeeId'),
             "username": username,
             "password": generate_password_hash(password),
-            "classes": request.form.getlist('classes[]'),
-            "subjects": request.form.getlist('subjects[]')
+            "class_subjects": class_subjects
         })
-        session['username'] = username
         return redirect(url_for('home'))
     else:
-        return render_template('register.html')
+        return render_template('register.html',subjects=subjects.find(),classes=classes.find())
 
 @app.route('/logout')
 def logout():
@@ -77,7 +84,29 @@ def get_session(_id):
     return session_collection.find_one({"session_id": _id, "is_status": True})
 
 def end_session(_id):
-    return session_collection.find_one_and_update({"session_id": _id}, {"$set": {"is_status": False}})
+    session_collection.update_one({"session_id": _id}, {"$set": {"is_status": False}})
+    student_ = session_collection.find_one()['students'][0]
+    class_ = students_collection.find_one({"student_id": student_})['class_name']
+    staff_id = session_collection.find_one()["staff"]
+    staff_ = staff.find_one({"employeeId": staff_id})
+    class_subjects= staff_.get('class_subjects')
+    subject = ""
+    for n,i in enumerate(class_subjects):
+        if i.get(f'class{n}') == class_: 
+            subject = i.get(f'subject{n}')
+            break
+    Attendance = []
+    for i in session_collection.find_one()['students']:
+        if classes.find_one({"class_name": class_, "students": i}):
+            Attendance.append({"student_id": i, "status": "Present"})
+        else:
+            Attendance.append({"student_id": i, "status": "Absent"})
+    attendance.insert_one({"class": class_, "subject": subject, "staff": staff_id,"timestamp":datetime.datetime.now() ,"Attendance": Attendance})
+
+    
+    
+
+
 
 def create_session(staffid):
     session_id = uuid.uuid4().hex
@@ -94,9 +123,6 @@ def create_session(staffid):
     return session_id
 
 # ---------------------------------------------------------
-global class_started
-class_started = {"status" : False, "endpoint": ""}
-
 # ----------------- ROOT –---------------------------------
 @app.route('/root', methods=['GET','POST'])
 def root():
@@ -151,42 +177,14 @@ def create_class_session():
         session_id = request.form.get('session_id')
         students = session_collection.find_one({"session_id": session_id})['students']
         classes.insert_one({"class_name": class_name, "students": students})
-        return redirect(url_for('createclass'))
+        for i in students:
+            students_collection.insert_one({"student_id": i, "class_name": class_name})
+        return redirect(url_for('create_class'))
     return 'Invalid request'
 
-
-# @app.route('/view_class/<class_id>', methods=['GET'])
-# def view_class(class_id):
-#     _class = classes.find_one({"_id": class_id})
-#     return render_template('view_class.html', messages= _class)
-# @app.route('/create_class', methods=['POST','GET'])
-# def create_class():
-#     if request.method == 'POST':
-#         class_name = request.form.get('class_name')
-#         _class = {
-#             "_id": uuid.uuid4().hex, 
-#             "class_name": class_name,
-#             "students": []
-#         }
-#         classes.insert_one(_class)
-        
-#         global class_started
-#         class_started = {"status":True, "endpoint": f"/add_students/{_class['_id']}", "class_id": f"{_class['_id']}"}
-        
-#         return redirect(f"/view_class/{_class['_id']}")
-
-#     return render_template('create_class.html')
-
-# @app.route('/add_students/<class_id>', methods=['GET'])
-# def add_students(class_id):
-#     if request.method == 'POST':
-#         student = request.form.get('student')
-#         classes.update_one({"_id": class_id}, {"$push": {"students": student}})
-#         return {"status": "success"}
-#     return {'mes':'hello'}
-
-
-
-
+# ---------------------Attendance------------------------------------
+@app.route('/attendance', methods=['POST','GET'])
+def view_attendance():
+    return render_template('view_attendance.html',attendance=attendance.find())
 if __name__ == '__main__':
     app.run(debug=True, port=2000)

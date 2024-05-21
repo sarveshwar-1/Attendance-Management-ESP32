@@ -18,49 +18,68 @@
         <label for="repeatPassword" class="form-label">Repeat Password</label>
         <input type="password" class="form-control" id="repeatPassword" name="repeatPassword">
     </div>
-<!-- ... -->
-<div class="mb-3">
-    <label class="form-label">Classes</label>
-    <div id="classes">
-        <!-- Replace with your actual classes -->
-        {% for index, class in enumerate(classes) %}
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="{{class}}" id="class{{index}}" name="classes[]">
-            <label class="form-check-label" for="class{{index}}">{{class}}</label>
-        </div>
-        {% endfor %}
-    </div>
-    <button type="button" class="btn btn-secondary mt-2" onclick="clearSelection('classes')">Clear</button>
-</div>
-<div class="mb-3">
-    <label class="form-label">Subject of Expertise</label>
-    <div id="subjects">
-        <!-- Replace with your actual subjects -->
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="subject1" id="subject1" name="subjects[]">
-            <label class="form-check-label" for="subject1">Subject 1</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="subject2" id="subject2" name="subjects[]">
-            <label class="form-check-label" for="subject2">Subject 2</label>
-        </div>
-        <div class="form-check">
-            <input class="form-check-input" type="checkbox" value="subject3" id="subject3" name="subjects[]">
-            <label class="form-check-label" for="subject3">Subject 3</label>
+    <div class="container mt-4">
+        <div class="classes mb-3">
+            <label for="classes" class="form-label">Select A Class</label>
+            <select class="form-select" id="classes" name="classes">
+                {% for class in classes %}
+                <option value="{{ class.get('class_name') }}">{{ class.get('class_name') }}</option>
+                {% endfor %}
+            </select>
+            <div class="subjects mt-3 ms-3">
+                <label for="subjects" class="form-label">Select A Subject</label>
+                <select class="form-select" id="subjects" name="subjects">
+                    {% for subject in subjects %}
+                    <option value="{{ subject.get('subject_name') }}">{{ subject.get('subject_name') }}</option>
+                    {% endfor %}
+                </select>
+            </div>
         </div>
     </div>
-    <button type="button" class="btn btn-secondary mt-2" onclick="clearSelection('subjects')">Clear</button>
-</div>
-    <button type="submit" class="btn btn-primary">Register</button>
-</form>
-<script>
-    function clearSelection(id) {
-        var inputs = document.getElementById(id).getElementsByTagName('input');
-        for (var i = 0; i < inputs.length; i++) {
-            if (inputs[i].type === 'checkbox') {
-                inputs[i].checked = false;
+    
+    <button type="button" id="addClassButton" class="btn btn-secondary">Add Class</button>
+    <button type="submit" class="btn btn-primary">Register</button></form>
+    <script>
+        var counter = 0
+        document.getElementById('addClassButton').addEventListener('click', function() {
+            var classes = document.getElementById('classes');
+            var subjects = document.getElementById('subjects');
+            var classOption = classes.options[classes.selectedIndex];
+            var subjectOption = subjects.options[subjects.selectedIndex];
+            var classList = document.createElement('li');
+            var hidden_class = document.createElement('input');
+
+            hidden_class.type = 'hidden';
+            hidden_class.name = `class${counter}`;
+            hidden_class.value = classOption.value;
+            hidden_class.className = 'class';
+
+            var hidden_subject = document.createElement('input');
+            hidden_subject.type = 'hidden';
+            hidden_subject.name = `subject${counter}`;
+            hidden_subject.value = subjectOption.value;
+            hidden_subject.className = 'subject';
+
+
+            document.querySelector('form').appendChild(hidden_class);
+            document.querySelector('form').appendChild(hidden_subject);
+            classList.className = 'list-group-item';
+            classList.textContent = classOption.textContent + ' - ' + subjectOption.textContent;
+            classList.style = 'display: flex; justify-content: space-between;padding: 0.5rem;border: 1px solid blue;margin-top: 0.5rem;border-radius: 0.5rem;';
+            document.querySelector('.classes').prepend(classList);
+            classes.selectedIndex = -1;
+            subjects.selectedIndex = -1;
+            counter = counter+1;
+        });
+        document.querySelector('form').addEventListener('submit', function() {
+            var count = document.createElement('input');
+            count.type = 'hidden';
+            count.name = 'count';
+            count.value = counter;
+            document.querySelector('form').appendChild(count);
+
             }
-        }
-    }
-</script>
-{%endblock%}
+        )
+    </script>
+{% endblock %}
+
