@@ -41,6 +41,12 @@ while True:
                 print(res)
                 print(res.text)
                 print(res.json)
+            elif res.json().get("mode") == "END_SESSION":
+                urlx = f"{base_url}{res.json().get('endpoint')}"
+                print(urlx)
+                print(res)
+                print(res.text)
+                print(res.json)
             else:
                 res = requests.post(urlx, json=data)
                 print(res.json())

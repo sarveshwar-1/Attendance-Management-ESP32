@@ -96,11 +96,17 @@ def end_session(_id):
             subject = i.get(f'subject{n}')
             break
     Attendance = []
+    for i in students_collection.find({"class_name": class_}):
+        student_id = i['student_id']
+        Attendance.append({"student_id": student_id, "status": "Absent"})
     for i in session_collection.find_one()['students']:
-        if classes.find_one({"class_name": class_, "students": i}):
-            Attendance.append({"student_id": i, "status": "Present"})
-        else:
-            Attendance.append({"student_id": i, "status": "Absent"})
+        print(i)
+        for n,j in enumerate(Attendance):
+            print(j['student_id'])
+            if j['student_id'] == i:
+                print("Present")
+                Attendance[n]['status'] = "Present"
+                break
     attendance.insert_one({"class": class_, "subject": subject, "staff": staff_id,"timestamp":datetime.datetime.now() ,"Attendance": Attendance})
 
     
@@ -144,7 +150,10 @@ def managesession(_id):
             print("Session already exists")
             end_session(_id)
             return jsonify({'mode': 'END_SESSION','endpoint': ""})
-        session_collection.update_one({"session_id": _id}, {"$push": {"students": request.json['data']}})
+        student_id = request.json['data']
+        session = session_collection.find_one({"session_id": _id})
+        if student_id not in session['students']:
+            session_collection.update_one({"session_id": _id}, {"$push": {"students": student_id}})
         return jsonify({"status": "success"})
     return jsonify({"mes":"hello"})
 
