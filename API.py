@@ -128,6 +128,7 @@ def create_session(staffid):
 def root():
     staffid = request.json['data']
     print(staffid)
+    print(type(staffid))
     if request.method == 'POST':
         if staff.find_one({"employeeId": staffid}):
             return jsonify({'mode': 'CREATE_SESSION','endpoint': f"/session/{create_session(staffid)}", "status": "success"})
@@ -140,6 +141,7 @@ def managesession(_id):
     print(response)
     if request.method == 'POST':
         if session_collection.find_one({"session_id": _id , "staff": response['data'], "is_status": True}):
+            print("Session already exists")
             end_session(_id)
             return jsonify({'mode': 'END_SESSION','endpoint': ""})
         session_collection.update_one({"session_id": _id}, {"$push": {"students": request.json['data']}})

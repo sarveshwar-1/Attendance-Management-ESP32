@@ -6,9 +6,10 @@ import requests
 import datetime
 #cap = cv2.VideoCapture(0)
 font = cv2.FONT_HERSHEY_PLAIN
-url='http://192.168.224.1/'
-
-URLx = 'http://127.0.0.1:2000/listen'
+url='http://192.168.90.1/'
+base_url = 'http://127.0.0.1:2000'
+root = '/root'
+urlx = f"{base_url}{root}"
 prev=""
 pres=""
 
@@ -30,16 +31,22 @@ while True:
             print("Data: ",pres)
             prev=pres
             data = {
-                "data": obj.data.decode("utf-8"),  # Assuming UTF-8 encoded data in QR code
-                "time": datetime.datetime.now().isoformat()
+                "data": obj.data.decode("utf-8")
             }
-            response = requests.post(URLx, json = data)
-            
-            
-            print(response)
-            print(response.text)
-            print(response.json)
-            
+
+            res = requests.post(urlx, json=data)
+            if res.json().get("mode")  == "CREATE_SESSION":
+                urlx = f"{base_url}{res.json().get('endpoint')}"
+                print(urlx)
+                print(res)
+                print(res.text)
+                print(res.json)
+            else:
+                res = requests.post(urlx, json=data)
+                print(res.json())
+                print(res)
+                print(res.text)
+                    
         cv2.putText(frame, str(obj.data), (50, 50), font, 2,
                     (255, 0, 0), 3)
 

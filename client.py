@@ -43,6 +43,10 @@ def generate_frames():
                     "time": datetime.datetime.now().isoformat()
                 }
                 response = requests.post(URLx, json=data)
+                
+                res = requests.post(url, json={"data": f"{empid}"})
+                if res.json().get("mode")  == "CREATE_SESSION":
+                url = f"{base_url}{res.json().get('endpoint')}"
 
                 print(response)
                 print(response.text)
